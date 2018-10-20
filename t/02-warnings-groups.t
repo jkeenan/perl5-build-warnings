@@ -7,16 +7,16 @@ use Test::More;
 use Capture::Tiny ':all';
 use Data::Dump qw( dd pp );
 
-BEGIN { use_ok( 'Perl5::Parse::MakeLog::Warnings' ); }
+BEGIN { use_ok( 'Perl5::Build::Warnings' ); }
 
 my ($self, $file, $rv, $stdout, $wg, $xg);
 
 
 {
     $file = "./t/data/make.g++-8-list-util-fallthrough.output.txt";
-    $self = Perl5::Parse::MakeLog::Warnings->new( { 'file' => $file } );
+    $self = Perl5::Build::Warnings->new( { 'file' => $file } );
     ok(defined $self, "Constructor returned defined object");
-    isa_ok($self, 'Perl5::Parse::MakeLog::Warnings');
+    isa_ok($self, 'Perl5::Build::Warnings');
 
     $rv = $self->parse_log_for_warnings();
     ok($rv, "parse_log_for_warnings() returned true value");

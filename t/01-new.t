@@ -5,9 +5,9 @@ use 5.14.0;
 use warnings;
 use Test::More;
 
-BEGIN { use_ok( 'Perl5::Parse::MakeLog::Warnings' ); }
+BEGIN { use_ok( 'Perl5::Build::Warnings' ); }
 
-#my $self = Perl5::Parse::MakeLog::Warnings->new();
+#my $self = Perl5::Build::Warnings->new();
 
 ##### Test error conditions #####
 
@@ -15,28 +15,28 @@ my ($self, $file);
 
 {
     local $@;
-    eval { $self = Perl5::Parse::MakeLog::Warnings->new(); };
+    eval { $self = Perl5::Build::Warnings->new(); };
     like($@, qr/Argument to constructor must be hashref/,
         "Got expected error message: no argument for new()");
 }
 
 {
     local $@;
-    eval { $self = Perl5::Parse::MakeLog::Warnings->new( 'file' => 'foo' ); };
+    eval { $self = Perl5::Build::Warnings->new( 'file' => 'foo' ); };
     like($@, qr/Argument to constructor must be hashref/,
         "Got expected error message: argument for new() not a hashref");
 }
 
 {
     local $@;
-    eval { $self = Perl5::Parse::MakeLog::Warnings->new( [ 'file' => 'foo' ] ); };
+    eval { $self = Perl5::Build::Warnings->new( [ 'file' => 'foo' ] ); };
     like($@, qr/Argument to constructor must be hashref/,
         "Got expected error message: argument for new() not a hashref");
 }
 
 {
     local $@;
-    eval { $self = Perl5::Parse::MakeLog::Warnings->new( { 'foo' => 'bar' } ); };
+    eval { $self = Perl5::Build::Warnings->new( { 'foo' => 'bar' } ); };
     like($@, qr/Argument to constructor must contain 'file' element/,
         "Got expected error message: argument for new() must contain 'file' element");
 }
@@ -44,16 +44,16 @@ my ($self, $file);
 {
     local $@;
     $file = 'bar';
-    eval { $self = Perl5::Parse::MakeLog::Warnings->new( { 'file' => $file } ); };
+    eval { $self = Perl5::Build::Warnings->new( { 'file' => $file } ); };
     like($@, qr/Cannot locate $file/,
         "Got expected error message: cannot locate value for 'file' element");
 }
 
 {
     $file = "./t/data/make.g++-8-list-util-fallthrough.output.txt";
-    $self = Perl5::Parse::MakeLog::Warnings->new( { 'file' => $file } );
+    $self = Perl5::Build::Warnings->new( { 'file' => $file } );
     ok(defined $self, "Constructor returned defined object");
-    isa_ok($self, 'Perl5::Parse::MakeLog::Warnings');
+    isa_ok($self, 'Perl5::Build::Warnings');
 }
 
 done_testing();

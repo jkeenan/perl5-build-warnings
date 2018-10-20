@@ -6,8 +6,8 @@ use warnings;
 # the contents of the Makefile that is written.
 
 my %WriteMakefileArgs = (
-    NAME                => 'Perl5::Parse::MakeLog::Warnings',
-    VERSION_FROM        => 'lib/Perl5/Parse/MakeLog/Warnings.pm',
+    NAME                => 'Perl5::Build::Warnings',
+    VERSION_FROM        => 'lib/Perl5/Build/Warnings.pm',
     AUTHOR              => 'James E Keenan (jkeenan@cpan.org)',
     ABSTRACT            => 'Parse make output for build-time warnings',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),

@@ -1,4 +1,4 @@
-package Perl5::Parse::MakeLog::Warnings;
+package Perl5::Build::Warnings;
 use 5.14.0;
 use warnings;
 our $VERSION = '0.01';
@@ -73,11 +73,11 @@ __END__
 
 =head1 NAME
 
-Perl5::Parse::MakeLog::Warnings - Parse make output for build-time warnings
+Perl5::Build::Warnings - Parse make output for build-time warnings
 
 =head1 SYNOPSIS
 
-  use Perl5::Parse::MakeLog::Warnings;
+  use Perl5::Build::Warnings;
   blah blah blah
 
 

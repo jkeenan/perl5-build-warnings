@@ -1,4 +1,4 @@
-pod2text Perl5::Parse::MakeLog::Warnings.pm > README
+pod2text Perl5::Build::Warnings.pm > README
 
 If this is still here it means the programmer was too lazy to create the readme file.
 
