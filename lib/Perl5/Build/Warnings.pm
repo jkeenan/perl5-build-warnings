@@ -14,15 +14,22 @@ sub new {
         unless exists $params->{file};
     croak "Cannot locate $params->{file}" unless -f $params->{file};
 
-    return bless $params, $class;
+    my $data = {};
+    while (my ($k,$v) = each %{$params}) {
+        $data->{$k} = $params->{$k};
+    }
+
+    my $init = _parse_log_for_warnings($data);
+
+    return bless $init, $class;
 }
 
-sub parse_log_for_warnings {
-    my $self = shift;
+sub _parse_log_for_warnings {
+    my $data = shift;
     my @warnings = ();
     my %warnings_groups = ();
     my $IN;
-    open $IN, '<', $self->{file} or croak "Cannot open $self->{file}";
+    open $IN, '<', $data->{file} or croak "Cannot open $data->{file}";
     while (my $l = <$IN>) {
         chomp $l;
         # op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
@@ -45,9 +52,9 @@ sub parse_log_for_warnings {
         };
     }
     $IN->close or croak "Unable to close handle after reading";
-    $self->{warnings_groups} = \%warnings_groups;
-    $self->{warnings} = \@warnings;
-    return $self;
+    $data->{warnings_groups} = \%warnings_groups;
+    $data->{warnings} = \@warnings;
+    return $data;
 }
 
 sub get_warnings_groups {
