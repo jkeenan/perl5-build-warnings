@@ -1,6 +1,24 @@
 package Perl5::Parse::MakeLog::Warnings;
 use strict;
+use warnings;
+use Carp;
+use Data::Dump qw(dd pp);
 
+
+sub new {
+    my ($class, $params) = @_;
+    croak "Argument to constructor must be hashref"
+        unless (ref($params) && ref($params) eq "HASH");
+    croak "Argument to constructor must contain 'file' element"
+        unless exists $params->{file};
+    croak "Cannot locate $params->{file}" unless -f $params->{file};
+
+    return bless $params, $class;
+}
+
+1;
+
+__END__
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
@@ -31,15 +49,6 @@ See Also   :
 
 #################### subroutine header end ####################
 
-
-sub new
-{
-    my ($class, %parameters) = @_;
-
-    my $self = bless ({}, ref ($class) || $class);
-
-    return $self;
-}
 
 
 #################### main pod documentation begin ###################
