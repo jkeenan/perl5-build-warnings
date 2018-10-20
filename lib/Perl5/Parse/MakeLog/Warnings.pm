@@ -1,6 +1,7 @@
 package Perl5::Parse::MakeLog::Warnings;
-use strict;
+use 5.14.0;
 use warnings;
+our $VERSION = '0.01';
 use Carp;
 use Data::Dump qw(dd pp);
 
@@ -16,45 +17,59 @@ sub new {
     return bless $params, $class;
 }
 
+sub parse_log_for_warnings {
+    my $self = shift;
+    my @warnings = ();
+    my %warnings_groups = ();
+    my $IN;
+    open $IN, '<', $self->{file} or croak "Cannot open $self->{file}";
+    while (my $l = <$IN>) {
+        chomp $l;
+        # op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+        next unless $l =~ m{^
+            ([^:]+):
+            (\d+):
+            (\d+):\s+warning:\s+
+            (.*?)\s+\[
+            (-W.*)]$
+        }x;
+        my ($source_file, $line, $char, $warning_text, $warnings_group) =
+            ($1, $2, $3, $4, $5);
+        $warnings_groups{$warnings_group}++;
+        push @warnings, {
+            source      => $source_file,
+            line        => $line,
+            char        => $char,
+            text        => $warning_text,
+            group       => $warnings_group,
+        };
+    }
+    $IN->close or croak "Unable to close handle after reading";
+    $self->{warnings_groups} = \%warnings_groups;
+    $self->{warnings} = \@warnings;
+    return $self;
+}
+
+sub get_warnings_groups {
+    my $self = shift;
+    return $self->{warnings_groups};
+}
+
+sub report_warnings_groups {
+    my $self = shift;
+    for my $w (sort keys %{$self->{warnings_groups}}) {
+        say sprintf "%-40s %3s" => $w, $self->{warnings_groups}{$w};
+    }
+}
+
+sub get_warnings {
+    my $self = shift;
+    return $self->{warnings};
+}
+
 1;
 
 __END__
-BEGIN {
-    use Exporter ();
-    use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '0.01';
-    @ISA         = qw(Exporter);
-    #Give a hoot don't pollute, do not export more than needed by default
-    @EXPORT      = qw();
-    @EXPORT_OK   = qw();
-    %EXPORT_TAGS = ();
-}
-
-
-#################### subroutine header begin ####################
-
-=head2 sample_function
-
- Usage     : How to use this function/method
- Purpose   : What it does
- Returns   : What it returns
- Argument  : What it wants to know
- Throws    : Exceptions and other anomolies
- Comment   : This is a sample subroutine header.
-           : It is polite to include more pod and fewer comments.
-
-See Also   :
-
-=cut
-
-#################### subroutine header end ####################
-
-
-
-#################### main pod documentation begin ###################
-## Below is the stub of documentation for your module.
-## You better edit it!
-
 
 =head1 NAME
 
@@ -68,15 +83,8 @@ Perl5::Parse::MakeLog::Warnings - Parse make output for build-time warnings
 
 =head1 DESCRIPTION
 
-Stub documentation for this module was created by ExtUtils::ModuleMaker.
-It looks like the author of the extension was negligent enough
-to leave the stub unedited.
-
-Blah blah blah.
-
 
 =head1 USAGE
-
 
 
 =head1 BUGS
@@ -91,7 +99,6 @@ Blah blah blah.
 
     James E Keenan
     CPAN ID: JKEENAN
-    XYZ Corp.
     jkeenan@cpan.org
     http://thenceforward.net/perl/modules/Perl5-Parse-MakeLog-Warnings
 
