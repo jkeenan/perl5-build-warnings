@@ -5,6 +5,101 @@ our $VERSION = '0.01';
 use Carp;
 use Data::Dump qw(dd pp);
 
+=encoding utf8
+
+=head1 NAME
+
+Perl5::Build::Warnings - Parse make output for build-time warnings
+
+=head1 SYNOPSIS
+
+    use Perl5::Build::Warnings;
+
+    my $self = Perl5::Build::Warnings->new( { file => '/path/to/make.log' } );
+
+    my $hashref = $self->get_warnings_groups;
+
+    my $arrayref = $self->get_warnings;
+
+    $self->report_warnings_groups;
+
+=head1 DESCRIPTION
+
+Perl5::Build::Warnings is a module for use in studying build-time warnings
+emitted by F<make> when building the Perl 5 core distribution from source
+code.
+
+=head2 Prerequisites
+
+CPAN module F<Capture::Tiny> is used in this library's test suite, but not in
+the module itself.  There are currently no other prerequisites not found in
+the Perl 5 core distribution.
+
+=head2 Assumptions
+
+=head3 Logging of F<make> Output
+
+The module assumes that the user has logged the output of F<make> (or
+F<make test_prep> -- but not F<make test> -- or Windows equivalents) to a
+plain-text file.  Something like:
+
+    make test_prep 2>&1 > /path/to/make.log
+
+=head3 Format for Build-Time Warnings
+
+The module assumes that within such a logfile, warnings are recorded in this
+format:
+
+    op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+
+That is,
+
+    <filename>:<line_numbert>:<character_number>: warning: <warning_description> [-<Wwarning_class>]
+
+Note that the first field recorded, C<filename> may be either the basename of
+a file in the top-level of the source code or a relative path to a file
+beneath the top-level.
+
+Note further that the last field recorded, the class of warning, starts with
+an open bracket (C<[>), followed by a hyphen and an upper-case 'W' (C<-W>),
+followed by the warning class, followed by a close bracket (C<]>).  In this
+module we will ignore the open and close brackets and the hyphen, but we will
+capture and report the upper-case 'W'.  Hence, whereas the log will record
+
+    [-Wclobbered]
+
+... this module will store and report that information as:
+
+    Wclobbered
+
+This is done in part because we may wish to use this data on the command-line
+and the hyphen is likely to be significant to the shell.
+
+=head1 METHODS
+
+=head2 C<new()>
+
+=over 4
+
+=item * Purpose
+
+Perl5::Build::Warnings constructor.
+
+=item * Arguments
+
+    $file = "./t/data/make.g++-8-list-util-fallthrough.output.txt";
+    $self = Perl5::Build::Warnings->new( { file => $file } );
+
+Single hash reference with one required element, C<file>, whose value is a
+path to a file holding a log of F<make>'s output.
+
+=item * Return Value
+
+Perl5::Build::Warnings object.
+
+=back
+
+=cut
 
 sub new {
     my ($class, $params) = @_;
@@ -37,8 +132,8 @@ sub _parse_log_for_warnings {
             ([^:]+):
             (\d+):
             (\d+):\s+warning:\s+
-            (.*?)\s+\[
-            (-W.*)]$
+            (.*?)\s+\[-
+            (W.*)]$
         }x;
         my ($source_file, $line, $char, $warning_text, $warnings_group) =
             ($1, $2, $3, $4, $5);
@@ -57,10 +152,68 @@ sub _parse_log_for_warnings {
     return $data;
 }
 
+=head2 C<get_warnings_groups()>
+
+=over 4
+
+=item * Purpose
+
+Identify the types of build-time warnings found in the F<make> log and the number of each such type.
+
+=item * Arguments
+
+    $hashref = $self->get_warnings_groups();
+
+None.
+
+=item * Return Value
+
+Reference to a hash whose elements are keyed on warnings classes (I<e.g.,>
+C<Wclobbered>).  The value of each element is the number of times such class
+appeared in the file.
+
+=back
+
+=cut
+
 sub get_warnings_groups {
     my $self = shift;
     return $self->{warnings_groups};
 }
+
+=head2 C<report_warnings_groups()>
+
+=over 4
+
+=item * Purpose
+
+Pretty-print to STDOUT the information returned by C<get_warnings_groups>.
+
+=item * Arguments
+
+    $self->report_warnings_groups;
+
+None.
+
+=item * Return Value
+
+Implicitly returns a Perl-true value.
+
+=item *  Comment
+
+The information reported will appear as below, but may change in the future.
+
+    Wcast-function-type                        6
+    Wclobbered                                 2
+    Wformat-overflow=                          2
+    Wignored-qualifiers                        4
+    Wimplicit-fallthrough=                    32
+    Wmultistatement-macros                     1
+    Wpragmas                                   3
+
+=back
+
+=cut
 
 sub report_warnings_groups {
     my $self = shift;
@@ -69,6 +222,27 @@ sub report_warnings_groups {
     }
 }
 
+=head2 C<get_warnings()>
+
+=over 4
+
+=item * Purpose
+
+Generate a list of all warnings.
+
+=item * Arguments
+
+    $arrayref = $self->get_warnings();
+
+=item * Return Value
+
+Array reference, each element of which is a reference hash holding a parsing
+of the elements of an individual warning.
+
+=back
+
+=cut
+
 sub get_warnings {
     my $self = shift;
     return $self->{warnings};
@@ -76,31 +250,10 @@ sub get_warnings {
 
 1;
 
-__END__
-
-=head1 NAME
-
-Perl5::Build::Warnings - Parse make output for build-time warnings
-
-=head1 SYNOPSIS
-
-  use Perl5::Build::Warnings;
-  blah blah blah
-
-
-=head1 DESCRIPTION
-
-
-=head1 USAGE
-
-
 =head1 BUGS
 
-
-
-=head1 SUPPORT
-
-
+None reported so far.   The author prefers patches filed at
+L<http://rt.cpan.org> rather than pull requests at github.
 
 =head1 AUTHOR
 
@@ -117,16 +270,9 @@ it and/or modify it under the same terms as Perl itself.
 The full text of the license can be found in the
 LICENSE file included with this module.
 
-
 =head1 SEE ALSO
 
 perl(1).
 
 =cut
-
-#################### main pod documentation end ###################
-
-
-1;
-# The preceding line will help the module return a true value
 

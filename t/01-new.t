@@ -36,7 +36,7 @@ my ($warnings_count);
 
 {
     local $@;
-    eval { $self = Perl5::Build::Warnings->new( { 'foo' => 'bar' } ); };
+    eval { $self = Perl5::Build::Warnings->new( { foo => 'bar' } ); };
     like($@, qr/Argument to constructor must contain 'file' element/,
         "Got expected error message: argument for new() must contain 'file' element");
 }
@@ -44,7 +44,7 @@ my ($warnings_count);
 {
     local $@;
     $file = 'bar';
-    eval { $self = Perl5::Build::Warnings->new( { 'file' => $file } ); };
+    eval { $self = Perl5::Build::Warnings->new( { file => $file } ); };
     like($@, qr/Cannot locate $file/,
         "Got expected error message: cannot locate value for 'file' element");
 }
@@ -53,14 +53,14 @@ my ($warnings_count);
 
 {
     $file = "./t/data/make.g++-8-list-util-fallthrough.output.txt";
-    $self = Perl5::Build::Warnings->new( { 'file' => $file } );
+    $self = Perl5::Build::Warnings->new( { file => $file } );
     ok(defined $self, "Constructor returned defined object");
     isa_ok($self, 'Perl5::Build::Warnings');
 
     $stdout = capture_stdout {
         $self->report_warnings_groups;
     };
-    like($stdout, qr/-Wimplicit-fallthrough=\s+32/,
+    like($stdout, qr/Wimplicit-fallthrough=\s+32/,
         "Reported implicit-fallthrough warning");
 
     @stdout = split /\n/ => $stdout;
@@ -69,7 +69,7 @@ my ($warnings_count);
     $wg = $self->get_warnings_groups;
     is(ref($wg), 'HASH', "get_warnings_groups() returned hashref");
     is(scalar keys %{$wg}, 7, "7 types of warnings found");
-    is($wg->{'-Wimplicit-fallthrough='}, 32, "Found 32 instances of implicit-fallthrough warnings");
+    is($wg->{'Wimplicit-fallthrough='}, 32, "Found 32 instances of implicit-fallthrough warnings");
     $warnings_count = 0;
     map { $warnings_count += $_ } values %{$wg};
     is($warnings_count, 50, "Got total of 50 warnings");
