@@ -1,9 +1,8 @@
 package Perl5::Build::Warnings;
 use 5.14.0;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use Carp;
-use Data::Dump qw(dd pp);
 
 =encoding utf8
 
