@@ -3,6 +3,8 @@ use 5.14.0;
 use warnings;
 our $VERSION = '0.02';
 use Carp;
+use IO::File;
+use IO::Zlib;
 
 =encoding utf8
 
@@ -123,7 +125,13 @@ sub _parse_log_for_warnings {
     my @warnings = ();
     my %warnings_groups = ();
     my $IN;
-    open $IN, '<', $data->{file} or croak "Cannot open $data->{file}";
+    if ($data->{file} =~ m/\.gz/) {
+        $IN = IO::Zlib->new($data->{file}, "rb");
+    }
+    else {
+        $IN = IO::File->new($data->{file}, "r");
+    }
+    croak "Could not open filehandle to $data->file" unless defined $IN;
     while (my $l = <$IN>) {
         chomp $l;
         # op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
