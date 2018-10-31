@@ -200,15 +200,16 @@ Implicitly returns a Perl-true value.
 
 =item *  Comment
 
-The information reported will appear as below, but may change in the future.
+The information reported will appear as below (2 leading whitespaces), but may
+change in the future.
 
-    Wcast-function-type                        6
-    Wclobbered                                 2
-    Wformat-overflow=                          2
-    Wignored-qualifiers                        4
-    Wimplicit-fallthrough=                    32
-    Wmultistatement-macros                     1
-    Wpragmas                                   3
+      Wcast-function-type                        6
+      Wclobbered                                 2
+      Wformat-overflow=                          2
+      Wignored-qualifiers                        4
+      Wimplicit-fallthrough=                    32
+      Wmultistatement-macros                     1
+      Wpragmas                                   3
 
 =back
 
@@ -217,7 +218,7 @@ The information reported will appear as below, but may change in the future.
 sub report_warnings_groups {
     my $self = shift;
     for my $w (sort keys %{$self->{warnings_groups}}) {
-        say sprintf "%-40s %3s" => $w, $self->{warnings_groups}{$w};
+        say sprintf "  %-40s %3s" => $w, $self->{warnings_groups}{$w};
     }
 }
 

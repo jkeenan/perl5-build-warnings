@@ -5,11 +5,12 @@ use 5.14.0;
 use warnings;
 use Test::More;
 use Capture::Tiny ':all';
+use Data::Dump qw(dd pp);
 
 BEGIN { use_ok( 'Perl5::Build::Warnings' ); }
 
 my ($self, $file, $rv, $stdout, @stdout, $wg, $xg);
-my ($warnings_count);
+my ($warnings_count, $expected_groups_count);
 
 ##### TESTS OF ERROR CONDITIONS #####
 
@@ -53,6 +54,7 @@ my ($warnings_count);
 
 {
     $file = "./t/data/make.g++-8-list-util-fallthrough.output.txt";
+    $expected_groups_count = 7;
     $self = Perl5::Build::Warnings->new( { file => $file } );
     ok(defined $self, "Constructor returned defined object");
     isa_ok($self, 'Perl5::Build::Warnings');
@@ -64,11 +66,15 @@ my ($warnings_count);
         "Reported implicit-fallthrough warning");
 
     @stdout = split /\n/ => $stdout;
-    is(@stdout, 7, "report_warnings_groups(): 7 types of warnings reported");
+    is(@stdout, $expected_groups_count,
+        "report_warnings_groups(): $expected_groups_count types of warnings reported");
+    my $w = $stdout[int(rand($expected_groups_count))];
+    like($w, qr/^\s\s/, "report_warnings_groups() pretty prints with two leading whitespace");
 
     $wg = $self->get_warnings_groups;
     is(ref($wg), 'HASH', "get_warnings_groups() returned hashref");
-    is(scalar keys %{$wg}, 7, "7 types of warnings found");
+    is(scalar keys %{$wg}, $expected_groups_count,
+        "$expected_groups_count types of warnings found");
     is($wg->{'Wimplicit-fallthrough='}, 32, "Found 32 instances of implicit-fallthrough warnings");
     $warnings_count = 0;
     map { $warnings_count += $_ } values %{$wg};
