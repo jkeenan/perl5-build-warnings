@@ -14,6 +14,10 @@ Perl5::Build::Warnings - Parse make output for build-time warnings
 
     $self->report_warnings_groups;
 
+    $arrayref = $self->get_warnings_for_group('Wunused-variable');
+
+    $arrayref = $self->get_warnings_for_source('op.c');
+
 # DESCRIPTION
 
 Perl5::Build::Warnings is a module for use in studying build-time warnings
@@ -66,6 +70,12 @@ capture and report the upper-case 'W'.  Hence, whereas the log will record
 This is done in part because we may wish to use this data on the command-line
 and the hyphen is likely to be significant to the shell.
 
+### Complete Documentation
+
+After installation, read the complete documentation via:
+
+    perldoc Perl5::Build::Warnings
+
 # INSTALLATION
 
 To install:
@@ -76,7 +86,3 @@ To install:
     make install
 
 If you are on a windows box you should use 'nmake' rather than 'make'.
-
-After installation, read the complete documentation via:
-
-    perldoc Perl5::Build::Warnings
