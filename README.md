@@ -40,6 +40,10 @@ plain-text file.  Something like:
 
     make test_prep 2>&1 > /path/to/make.log
 
+The build log may be gzipped-compressed, _e.g.:_
+
+    make test_prep 2>&1 | gzip -c > /path/to/make.log.gz
+
 ### Format for Build-Time Warnings
 
 The module assumes that within such a logfile, warnings are recorded in this
