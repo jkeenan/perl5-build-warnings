@@ -24,6 +24,11 @@ Perl5::Build::Warnings - Parse make output for build-time warnings
 
     $self->report_warnings_groups;
 
+    $arrayref = $self->get_warnings_for_group('Wunused-variable');
+
+    $arrayref = $self->get_warnings_for_source('op.c');
+
+
 =head1 DESCRIPTION
 
 Perl5::Build::Warnings is a module for use in studying build-time warnings
@@ -244,7 +249,7 @@ Generate a list of all warnings.
 
 =item * Return Value
 
-Array reference, each element of which is a reference hash holding a parsing
+Array reference, each element of which is a reference to a hash holding a parsing
 of the elements of an individual warning.
 
 =back
@@ -272,7 +277,7 @@ String holding name of one group of warnings.  Each such string must begin with 
 
 =item * Return Value
 
-Array reference, each element of which is a reference hash holding a parsing
+Array reference, each element of which is a reference to a hash holding a parsing
 of the elements of an individual warning of the specified warnings group.
 
 =back
@@ -286,6 +291,35 @@ sub get_warnings_for_group {
         unless $self->{warnings_groups}->{$wg};
 
     return [ grep { $_->{group} eq $wg } @{$self->{warnings}} ];
+}
+
+=head2 C<get_warnings_for_source()>
+
+=over 4
+
+=item * Purpose
+
+Get a list of all the warnings generated from one specified source file.
+
+=item * Arguments
+
+    $arrayref = $self->get_warnings_for_source('op.c');
+
+String holding name of one source file.  Note that there may be some ambiguity here.  Use with caution.
+
+=item * Return Value
+
+Array reference, each element of which is a reference to a hash holding a parsing
+of the elements of an individual warning of the specified warnings source.
+
+=back
+
+=cut
+
+sub get_warnings_for_source {
+    my ($self, $sf) = @_;
+
+    return [ grep { $_->{source} eq $sf } @{$self->{warnings}} ];
 }
 
 1;

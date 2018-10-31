@@ -5,13 +5,13 @@ use 5.14.0;
 use warnings;
 use Test::More;
 use Capture::Tiny ':all';
-use Data::Dump qw(dd pp);
 
 BEGIN { use_ok( 'Perl5::Build::Warnings' ); }
 
-my ($self, $file, $rv, $stdout, @stdout, $wg, $xg);
+my ($self, $file, $rv, $stdout, @stdout, $wg, $xg, $sf);
 my ($warnings_count, $expected_groups_count, $expected_single_warning_count);
 my ($expected_total_warnings_count);
+my ($expected_total_warnings_in_source_count);
 
 ##### TESTS OF ERROR CONDITIONS #####
 
@@ -147,8 +147,6 @@ my ($expected_total_warnings_count);
         "Reported null-pointer-arithmetic warning");
 
     @stdout = split /\n/ => $stdout;
-
-    @stdout = split /\n/ => $stdout;
     is(@stdout, $expected_groups_count,
         "report_warnings_groups(): $expected_groups_count types of warnings reported");
     my $w = $stdout[int(rand($expected_groups_count))];
@@ -192,6 +190,12 @@ my ($expected_total_warnings_count);
     $expected_single_warning_count =  58;
     is(scalar @{$rv}, $expected_single_warning_count,
         "Got $expected_single_warning_count instances of warning '$wg'");
+
+    $sf = 'op.c';
+    $rv = $self->get_warnings_for_source($sf);
+    $expected_total_warnings_in_source_count = 22;
+    is(scalar @{$rv}, $expected_total_warnings_in_source_count,
+        "Got $expected_total_warnings_in_source_count warnings from '$sf'");
 
 }
 
