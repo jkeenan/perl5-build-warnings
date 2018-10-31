@@ -256,6 +256,38 @@ sub get_warnings {
     return $self->{warnings};
 }
 
+=head2 C<get_warnings_for_group()>
+
+=over 4
+
+=item * Purpose
+
+Get a list of all the warnings for one specified warnings group.
+
+=item * Arguments
+
+    $arrayref = $self->get_warnings_for_group("Wduplicate-decl-specifier");
+
+String holding name of one group of warnings.  Each such string must begin with an upper-case C<W>.  As mentioned above, we drop the leading hyphen to avoid confusing the shell.
+
+=item * Return Value
+
+Array reference, each element of which is a reference hash holding a parsing
+of the elements of an individual warning of the specified warnings group.
+
+=back
+
+=cut
+
+sub get_warnings_for_group {
+    my ($self, $wg) = @_;
+    croak "Name of warnings group must begin with 'W'" unless $wg =~ m/^W/;
+    croak "Warnings group '$wg' not found"
+        unless $self->{warnings_groups}->{$wg};
+
+    return [ grep { $_->{group} eq $wg } @{$self->{warnings}} ];
+}
+
 1;
 
 =head1 BUGS

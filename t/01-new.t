@@ -147,7 +147,6 @@ my ($expected_total_warnings_count);
         "Reported null-pointer-arithmetic warning");
 
     @stdout = split /\n/ => $stdout;
-    dd(\@stdout);
 
     @stdout = split /\n/ => $stdout;
     is(@stdout, $expected_groups_count,
@@ -171,5 +170,29 @@ my ($expected_total_warnings_count);
     $xg = $self->get_warnings;
     is(ref($xg), 'ARRAY', "get_warnings() returned arrayref");
     is(scalar @{$xg}, $expected_total_warnings_count, "Got expected number of warnings");
+
+    {
+        local $@;
+        my $bad_group = q|duplicate-decl-specifier|;
+        eval { $self->get_warnings_for_group($bad_group); };
+        like($@, qr/Name of warnings group must begin with 'W'/,
+            "Got expected error for warnings group name not starting with 'W'");
+    }
+
+    {
+        local $@;
+        my $bad_group = q|Wfoo-bar|;
+        eval { $self->get_warnings_for_group($bad_group); };
+        like($@, qr/Warnings group '$bad_group' not found/,
+            "Got expected error for unknown or unrecorded warnings group");
+    }
+
+    $wg = "Wduplicate-decl-specifier";
+    $rv = $self->get_warnings_for_group($wg);
+    $expected_single_warning_count =  58;
+    is(scalar @{$rv}, $expected_single_warning_count,
+        "Got $expected_single_warning_count instances of warning '$wg'");
+
 }
+
 done_testing();
