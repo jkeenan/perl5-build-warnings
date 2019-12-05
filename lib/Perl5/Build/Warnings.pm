@@ -64,7 +64,7 @@ format:
 
 That is,
 
-    <filename>:<line_numbert>:<character_number>: warning: <warning_description> [-<Wwarning_class>]
+    <filename>:<line_number>:<character_number>: warning: <warning_description> [-<Wwarning_class>]
 
 Note that the first field recorded, C<filename> may be either the basename of
 a file in the top-level of the source code or a relative path to a file

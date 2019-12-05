@@ -1,92 +1,84 @@
-# NAME
+NAME
+====
 
 Perl5::Build::Warnings - Parse make output for build-time warnings
 
-# SYNOPSIS
+SYNOPSIS
+========
 
-    use Perl5::Build::Warnings;
+        use Perl5::Build::Warnings;
 
-    my $self = Perl5::Build::Warnings->new( { file => '/path/to/make.log' } );
+        my $self = Perl5::Build::Warnings->new( { file => '/path/to/make.log' } );
 
-    my $hashref = $self->get_warnings_groups;
+        my $hashref = $self->get_warnings_groups;
 
-    my $arrayref = $self->get_warnings;
+        my $arrayref = $self->get_warnings;
 
-    $self->report_warnings_groups;
+        $self->report_warnings_groups;
 
-    $arrayref = $self->get_warnings_for_group('Wunused-variable');
+        $arrayref = $self->get_warnings_for_group('Wunused-variable');
 
-    $arrayref = $self->get_warnings_for_source('op.c');
+        $arrayref = $self->get_warnings_for_source('op.c');
 
-# DESCRIPTION
+DESCRIPTION
+===========
 
-Perl5::Build::Warnings is a module for use in studying build-time warnings
-emitted by `make` when building the Perl 5 core distribution from source
-code.
+Perl5::Build::Warnings is a module for use in studying build-time warnings emitted by `make` when building the Perl 5 core distribution from source code.
 
-## Prerequisites
+Prerequisites
+-------------
 
-CPAN module `Capture::Tiny` is used in this library's test suite, but not in
-the module itself.  There are currently no other prerequisites not found in
-the Perl 5 core distribution.
+CPAN module `Capture::Tiny` is used in this library's test suite, but not in the module itself. There are currently no other prerequisites not found in the Perl 5 core distribution.
 
-## Assumptions
+Assumptions
+-----------
 
 ### Logging of `make` Output
 
-The module assumes that the user has logged the output of `make` (or
-`make test_prep` -- but not `make test` -- or Windows equivalents) to a
-plain-text file.  Something like:
+The module assumes that the user has logged the output of `make` (or `make test_prep` -- but not `make test` -- or Windows equivalents) to a plain-text file. Something like:
 
-    make test_prep 2>&1 > /path/to/make.log
+        make test_prep 2>&1 > /path/to/make.log
 
-The build log may be gzipped-compressed, _e.g.:_
+The build log may be gzipped-compressed, *e.g.:*
 
-    make test_prep 2>&1 | gzip -c > /path/to/make.log.gz
+        make test_prep 2>&1 | gzip -c > /path/to/make.log.gz
 
 ### Format for Build-Time Warnings
 
-The module assumes that within such a logfile, warnings are recorded in this
-format:
+The module assumes that within such a logfile, warnings are recorded in this format:
 
-    op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+        op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
 
 That is,
 
-    <filename>:<line_numbert>:<character_number>: warning: <warning_description> [-<Wwarning_class>]
+        <filename>:<line_number>:<character_number>: warning: <warning_description> [-<Wwarning_class>]
 
-Note that the first field recorded, `filename` may be either the basename of
-a file in the top-level of the source code or a relative path to a file
-beneath the top-level.
+Note that the first field recorded, `filename` may be either the basename of a file in the top-level of the source code or a relative path to a file beneath the top-level.
 
-Note further that the last field recorded, the class of warning, starts with
-an open bracket (`[`), followed by a hyphen and an upper-case 'W' (`-W`),
-followed by the warning class, followed by a close bracket (`]`).  In this
-module we will ignore the open and close brackets and the hyphen, but we will
-capture and report the upper-case 'W'.  Hence, whereas the log will record
+Note further that the last field recorded, the class of warning, starts with an open bracket (`[`), followed by a hyphen and an upper-case 'W' (`-W`), followed by the warning class, followed by a close bracket (`]`). In this module we will ignore the open and close brackets and the hyphen, but we will capture and report the upper-case 'W'. Hence, whereas the log will record
 
-    [-Wclobbered]
+        [-Wclobbered]
 
-... this module will store and report that information as:
+… this module will store and report that information as:
 
-    Wclobbered
+        Wclobbered
 
-This is done in part because we may wish to use this data on the command-line
-and the hyphen is likely to be significant to the shell.
+This is done in part because we may wish to use this data on the command-line and the hyphen is likely to be significant to the shell.
 
 ### Complete Documentation
 
 After installation, read the complete documentation via:
 
-    perldoc Perl5::Build::Warnings
+        perldoc Perl5::Build::Warnings
 
-# INSTALLATION
+INSTALLATION
+============
 
 To install:
 
-    perl Makefile.PL
-    make
-    make test
-    make install
+        perl Makefile.PL
+        make
+        make test
+        make install
 
 If you are on a windows box you should use 'nmake' rather than 'make'.
