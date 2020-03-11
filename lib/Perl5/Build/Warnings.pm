@@ -338,7 +338,7 @@ L<http://rt.cpan.org> rather than pull requests at github.
     James E Keenan
     CPAN ID: JKEENAN
     jkeenan@cpan.org
-    http://thenceforward.net/perl/modules/Perl5-Parse-MakeLog-Warnings
+    http://thenceforward.net/perl/modules/Perl5-Build-Warnings/
 
 =head1 COPYRIGHT
 
