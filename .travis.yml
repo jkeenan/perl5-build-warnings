@@ -1,20 +1,19 @@
 language: perl
 perl:
+  - "5.34"
+  - "5.32"
   - "5.30"
   - "5.28"
   - "5.26"
   - "5.24"
   - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
+  - "5.34-shrplib"
+  - "5.32-shrplib"
   - "5.30-shrplib"
   - "5.28-shrplib"
   - "5.26-shrplib"
   - "5.24-shrplib"
   - "5.22-shrplib"
-  - "5.20-shrplib"
-  - "5.18-shrplib"
 notifications:
   email:
     recipients:
