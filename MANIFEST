@@ -1,4 +1,6 @@
 Changes
+examples/parse-build-warnings
+examples/report-build-warnings
 lib/Perl5/Build/Warnings.pm
 LICENSE
 Makefile.PL
