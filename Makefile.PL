@@ -12,6 +12,7 @@ my %WriteMakefileArgs = (
     VERSION_FROM        => 'lib/Perl5/Build/Warnings.pm',
     AUTHOR              => 'James E Keenan (jkeenan@cpan.org)',
     ABSTRACT            => 'Parse make output for build-time warnings',
+    LICENSE             => 'perl_5',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),
     PREREQ_PM           => {
         'IO::Zlib'          => 0,
