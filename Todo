@@ -2,9 +2,9 @@ TODO list for Perl module Perl5::Build::Warnings
 
 2026-07-02:
 
-* Change author's email address away from cpan.org
+* Change author's email address away from cpan.org DONE
 
-* Consider moving locus of bug reports and patches to GitHub.
+* Consider moving locus of bug reports and patches to GitHub. DONE
 
 * When reading the output of 'make' or 'make test_prep', provide the user with
 an option to replace higher-order-ASCII open and close single-quote characters
