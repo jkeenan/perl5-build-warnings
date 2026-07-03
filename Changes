@@ -1,5 +1,9 @@
 Revision history for Perl module Perl5::Build::Warnings
 
+0.07 Fri Jul  3 03:55:29 PM EDT 2026
+    - Correction to MANIFEST needed so that test suite can locate file in
+      tarball.
+
 0.06 Fri Jul  3 03:14:18 PM EDT 2026
     - No change in functionality -- yet
     - But added a file used in testing and generated via 'make' when building
