@@ -330,14 +330,13 @@ sub get_warnings_for_source {
 
 =head1 BUGS
 
-None reported so far.   The author prefers patches filed at
-L<http://rt.cpan.org> rather than pull requests at github.
+None reported so far.
 
 =head1 AUTHOR
 
     James E Keenan
     CPAN ID: JKEENAN
-    jkeenan@cpan.org
+    jkeenan@pobox.com
     http://thenceforward.net/perl/modules/Perl5-Build-Warnings/
 
 =head1 COPYRIGHT

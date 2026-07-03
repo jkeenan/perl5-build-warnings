@@ -24,6 +24,6 @@ test_script:
 notifications:
   - provider: Email
     to:
-    - jkeenan@cpan.org
+    - jkeenan@pobox.com
     on_build_status_changed: true
 

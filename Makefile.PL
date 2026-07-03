@@ -10,7 +10,7 @@ my $mm_ver = ExtUtils::MakeMaker->VERSION;
 my %WriteMakefileArgs = (
     NAME                => 'Perl5::Build::Warnings',
     VERSION_FROM        => 'lib/Perl5/Build/Warnings.pm',
-    AUTHOR              => 'James E Keenan (jkeenan@cpan.org)',
+    AUTHOR              => 'James E Keenan (jkeenan@pobox.com)',
     ABSTRACT            => 'Parse make output for build-time warnings',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),
     PREREQ_PM           => {
@@ -32,7 +32,7 @@ my %WriteMakefileArgs = (
                 type => 'git',
             },
             bugtracker => {
-                web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Perl5-Build-Warnings',
+                web => 'https://github.com/jkeenan/perl5-build-warnings/issues',
             },
         },
     })),
