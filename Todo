@@ -21,3 +21,8 @@ will have 6 instances of '.
 
 * Revise documentation -- and perhaps code -- to enable easy use on the output
 of 'make' on CPAN distributions, e.g., Tk.
+
+* Consider creating methods which will sort build-time errors by the *.c
+source code files during whose compilation was triggered. (Somewhat like we
+already can do for build-time error categories.)  Create utility executables
+to facilitate this.
