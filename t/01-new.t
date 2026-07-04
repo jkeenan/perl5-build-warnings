@@ -5,6 +5,7 @@ use 5.14.0;
 use warnings;
 use Test::More;
 use Capture::Tiny ':all';
+#use Data::Dump qw(dd pp);
 
 BEGIN { use_ok( 'Perl5::Build::Warnings' ); }
 
@@ -252,30 +253,40 @@ my ($expected_total_warnings_in_source_count);
     is(ref($xg), 'ARRAY', "get_warnings() returned arrayref");
     is(scalar @{$xg}, $expected_total_warnings_count, "Got expected number of warnings");
 
-    my $group = $self->{warnings}->[1]->{group};
-    my $source = $self->{warnings}->[1]->{source};
-    my $text = $self->{warnings}->[1]->{text};
-    my $expected_group = "Wincompatible-pointer-types";
-    my $expected_source = "Xlib.t";
-    my $expected_text =
-    "initialization of \xE2\x80\x98KeySym (*)(Display *, unsigned int,  int)\xE2\x80\x99 {aka \xE2\x80\x98long unsigned int (*)(Display *, unsigned int,  int)\xE2\x80\x99} from incompatible pointer type \xE2\x80\x98KeySym (*)(Display *, KeyCode,  int)\xE2\x80\x99 {aka \xE2\x80\x98long unsigned int (*)(Display *, unsigned char,  int)\xE2\x80\x99}";
-    is($group, $expected_group, "Got warnings category '$expected_group' as expected");
-    is($source, $expected_source, "Got source file '$expected_source' as expected");
-    is($text, $expected_text, "Got expected text of build-time warning");
+    $sf = 'tkListbox.c';
+    $rv = $self->get_warnings_for_source($sf);
+    $expected_total_warnings_in_source_count = 17;
+    is(scalar @{$rv}, $expected_total_warnings_in_source_count,
+        "Got $expected_total_warnings_in_source_count warnings from '$sf'");
 
-    my $expected_cleaned_text = qq|initialization of \"KeySym (*)(Display *, unsigned int,  int)\" {aka \"long unsigned int (*)(Display *, unsigned int,  int)\"} from incompatible pointer type \"KeySym (*)(Display *, KeyCode,  int)\" {aka \"long unsigned int (*)(Display *, unsigned char,  int)\"}|;
+    {
+        note("Experimental new feature");
 
-    my $cleaned_text;
-    # https://github.com/jkeenan/perl5-build-warnings/pull/2/files
-    #($cleaned_text) = $text =~ s/[\x{2018}\x{2019}]/"/gr;
-    ($cleaned_text) = $text =~ s{(
-        \xE2\x80\x98 |
-        \xE2\x80\x99
-    )}
-    {"}grx;
-    is($cleaned_text, $expected_cleaned_text,
-        "'Smart' open and closed double-quotes converted to ordinary double-quotes");
+        my $group = $self->{warnings}->[1]->{group};
+        my $source = $self->{warnings}->[1]->{source};
+        my $text = $self->{warnings}->[1]->{text};
+        my $expected_group = "Wincompatible-pointer-types";
+        my $expected_source = "Xlib.t";
+        my $expected_text =
+        "initialization of \xE2\x80\x98KeySym (*)(Display *, unsigned int,  int)\xE2\x80\x99 {aka \xE2\x80\x98long unsigned int (*)(Display *, unsigned int,  int)\xE2\x80\x99} from incompatible pointer type \xE2\x80\x98KeySym (*)(Display *, KeyCode,  int)\xE2\x80\x99 {aka \xE2\x80\x98long unsigned int (*)(Display *, unsigned char,  int)\xE2\x80\x99}";
+        is($group, $expected_group, "Got warnings category '$expected_group' as expected");
+        is($source, $expected_source, "Got source file '$expected_source' as expected");
+        is($text, $expected_text, "Got expected text of build-time warning");
 
+        my $expected_cleaned_text = qq|initialization of \"KeySym (*)(Display *, unsigned int,  int)\" {aka \"long unsigned int (*)(Display *, unsigned int,  int)\"} from incompatible pointer type \"KeySym (*)(Display *, KeyCode,  int)\" {aka \"long unsigned int (*)(Display *, unsigned char,  int)\"}|;
+
+        my $cleaned_text;
+        # https://github.com/jkeenan/perl5-build-warnings/pull/2/files
+        #($cleaned_text) = $text =~ s/[\x{2018}\x{2019}]/"/gr;
+        ($cleaned_text) = $text =~ s{(
+            \xE2\x80\x98 |
+            \xE2\x80\x99
+        )}
+        {"}grx;
+        is($cleaned_text, $expected_cleaned_text,
+            "'Smart' open and closed double-quotes converted to ordinary double-quotes");
+
+    }
 }
 
 done_testing();

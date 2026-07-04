@@ -309,7 +309,8 @@ Get a list of all the warnings generated from one specified source file.
 
     $arrayref = $self->get_warnings_for_source('op.c');
 
-String holding name of one source file.  Note that there may be some ambiguity here.  Use with caution.
+String holding name of one source file.  Note that there may be some ambiguity
+here.  Use with caution.
 
 =item * Return Value
 
