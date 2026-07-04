@@ -25,4 +25,5 @@ of 'make' on CPAN distributions, e.g., Tk.
 * Consider creating methods which will sort build-time errors by the *.c
 source code files during whose compilation was triggered. (Somewhat like we
 already can do for build-time error categories.)  Create utility executables
-to facilitate this.
+to facilitate this.  THIS FUNCTIONALITY ALREADY IN PLACE (except for utility
+executable).
