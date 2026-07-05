@@ -1,0 +1,84 @@
+#!/usr/bin/env perl
+# parse-one-file-for-warnings
+use 5.14.0;
+use warnings;
+use Carp;
+
+use Perl5::Build::Warnings;
+use Data::Dump qw(dd pp);
+
+=pod
+
+    perl parse-one-file-for-warnings <make-output-file> <source-file>
+
+The first command-line argument must be the path to a file holding F<make> output.
+
+The second command-line argument must be the name of a file which, in the
+F<make> output, is reported as triggering a warning.  B<Caution:> This is
+neither an absolute or relative path to the triggering file.  Rather, it is
+simply the way the C compiler formats the name of the file triggering the
+warning.  Usually, this is simply the I<basename> of a file triggering the
+warning.
+
+B<Example:> In this distribution we have included a sample file,
+F<t/data/804.036-0-gcc-13.make.output.txt.gz>,  holding the output of F<make>
+when run on the Tk distribution's Makefile.  If we know that some of these
+warnings were being triggered by a file named as C<Event.xs> and we wanted to
+display I<all> build-time warnings generated from such a file, we would say:
+
+    perl parse-one-file-for-warnings \
+        t/data/804.036-0-gcc-13.make.output.txt.gz \
+        Event.xs
+
+Within the Tk distribution, this file's relative path is actually
+F<Event/Event.xs>, but in reporting warnings the C compiler flattens that
+simply to C<Event.xs>.  So the invocation above generates output like this:
+
+    [
+      {
+        char   => 2,
+        group  => "Wdeprecated-declarations",
+        line   => 1154,
+        source => "Event.xs",
+        text   => "\xE2\x80\x98Perl_dowantarray\xE2\x80\x99 is deprecated",
+      },
+      {
+        char   => 2,
+        group  => "Wdeprecated-declarations",
+        line   => 1171,
+        source => "Event.xs",
+        text   => "\xE2\x80\x98Perl_dowantarray\xE2\x80\x99 is deprecated",
+      },
+      {
+        char   => 18,
+        group  => "Wincompatible-pointer-types",
+        line   => 1535,
+        source => "Event.xs",
+        text   => "initialization of \xE2\x80\x98SV *\xE2\x80\x99 {aka \xE2\x80\x98struct sv *\xE2\x80\x99} from incompatible pointer type \xE2\x80\x98char *\xE2\x80\x99",
+      },
+      {
+        char   => 26,
+        group  => "Wincompatible-pointer-types",
+        line   => 1540,
+        source => "Event.xs",
+        text   => "assignment to \xE2\x80\x98char *\xE2\x80\x99 from incompatible pointer type \xE2\x80\x98SV *\xE2\x80\x99 {aka \xE2\x80\x98struct sv *\xE2\x80\x99}",
+      },
+    ]
+
+=cut
+
+croak "Must provide two command-line arguments: 'make' output file and file triggering warnings"
+    unless @ARGV == 2;
+
+my ($make_output_file, $source_file) = @ARGV;
+
+croak "Cannot locate file '$make_output_file'" unless -f $make_output_file;
+
+say "'make' output file:  $make_output_file";
+say '';
+my $self = Perl5::Build::Warnings->new( { file => $make_output_file } );
+my $aref = $self->get_warnings_for_source($source_file);
+dd $aref;
+say '';
+
+__END__

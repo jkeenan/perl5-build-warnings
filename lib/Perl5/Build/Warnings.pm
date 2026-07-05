@@ -39,7 +39,9 @@ code.
 
 CPAN module F<Capture::Tiny> is used in this library's test suite, but not in
 the module itself.  There are currently no other prerequisites not found in
-the Perl 5 core distribution.
+the Perl 5 core distribution.  (In the F<examples/> subdirectory within this
+distribution, however, there are several simple programs that use CPAN module
+F<Data::Dump> to present the output from some of the methods listed above.)
 
 =head2 Assumptions
 
