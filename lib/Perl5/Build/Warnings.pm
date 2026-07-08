@@ -143,7 +143,20 @@ sub _parse_log_for_warnings {
     croak "Could not open filehandle to $data->file" unless defined $IN;
     while (my $l = <$IN>) {
         chomp $l;
+
+        # if it contains utf8 decode it
+        utf8::decode($l);
+
+        # if it contains unicode single quotes, convert to perl double quotes,
+        # we choose double quotes because Data::Dumper defaults to using single
+        # quotes, so a quick Dump of the data will not require any escaping.
+        $l =~ s/[\x{2018}\x{2019}]/"/g;
+
+        # thus:
         # op.c:5468:34: warning: argument ‘o’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+        # ends up as:
+        # op.c:5468:34: warning: argument "o" might be clobbered by "longjmp" or "vfork" [-Wclobbered]
+
         next unless $l =~ m{^
             ([^:]+):
             (\d+):
@@ -353,4 +366,3 @@ LICENSE file included with this module.
 perl(1).
 
 =cut
-
