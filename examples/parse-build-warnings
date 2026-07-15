@@ -4,7 +4,12 @@ use warnings;
 use Carp;
 
 use Perl5::Build::Warnings;
+use Getopt::Long;
 use Data::Dump qw(dd pp);
+
+my ($dumbquotes) = ('') x 1;
+GetOptions("dq" => \$dumbquotes)
+    or croak "Error in command line arguments\n";
 
 croak "Must provide path to 'make' output"
     unless @ARGV;
@@ -19,6 +24,21 @@ for my $f (@inputs) {
     say '';
     my $self = Perl5::Build::Warnings->new( { file => $f } );
     my $aref = $self->get_warnings;
-    dd $aref;
+    unless ($dumbquotes) {
+        dd $aref;
+    }
+    else {
+        my @cleaned = ();
+        for my $w ( @$aref ) {
+            my $cleaned = { map { $_ => $w->{$_} } keys %{$w} };
+            ($cleaned->{text}) = $w->{text} =~ s{(
+                \xE2\x80\x98 |
+                \xE2\x80\x99
+            )}
+            {"}grx;
+            push @cleaned, $cleaned;
+        }
+        dd [ @cleaned ];
+    }
     say '';
 }
